@@ -27,7 +27,11 @@ def scrape_ebay_sold_listings(search_query):
             date_str = item.find(class_="POSITIVE").string
 
             # Parse date string into datetime object
-            date = datetime.strptime(date_str, "%b-%d %H:%M")
+            try:
+                date = datetime.strptime(date_str, "%b-%d %H:%M")
+            except ValueError:
+                # Some listings might have different date formats, ignore them
+                continue
 
             # Group prices by month and year
             month_year = date.strftime("%b-%Y")
