@@ -1,10 +1,11 @@
+import streamlit as st
+from bs4 import BeautifulSoup
+import requests
+
 # Function to scrape eBay sold listings
 def scrape_ebay_sold_listings(search_item):
     search_item = search_item.split(" ")
     search_item = "+".join(search_item)
-import streamlit as st
-from bs4 import BeautifulSoup
-import requests
 
     price_list = []
 
