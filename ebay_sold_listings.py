@@ -1,97 +1,63 @@
+# Function to scrape eBay sold listings
+def scrape_ebay_sold_listings(search_item):
+    search_item = search_item.split(" ")
+    search_item = "+".join(search_item)
 import streamlit as st
-from itertools import product
+from bs4 import BeautifulSoup
+import requests
 
-# Function to generate possible search queries
-def generate_queries(brand, sport, year, series, player_name):
-    # Remove empty strings from input lists
-    brand = [item.strip() for item in brand if item.strip()]
-    sport = [item.strip() for item in sport if item.strip()]
-    year = [item.strip() for item in year if item.strip()]
-    series = [item.strip() for item in series if item.strip()]
-    player_name = [item.strip() for item in player_name if item.strip()]
+    price_list = []
 
-    # Generate combinations of input values
-    combinations = list(product(brand, sport, year, series, player_name))
-    queries = []
+    # The range of pages starting at page 1 and ending at page 15
+    for i in range(1, 16):
+        url = f"https://www.ebay.com/sch/i.html?_nkw={search_item}&_sacat=0&rt=nc&LH_Sold=1&LH_Complete=1&_pgn={i}"
+        page = requests.get(url).text
+        doc = BeautifulSoup(page, "html.parser")
 
-    # Create search queries
-    for combo in combinations:
-        query = " ".join(combo)
-        queries.append(query)
+        page = doc.find(class_="srp-results srp-list clearfix")
 
-    return queries
+        listings = page.find_all("li", class_="s-item s-item__pl-on-bottom")
 
-# Streamlit App
-def main():
-    st.title("eBay Sold Listings Scraper")
+        for item in listings:
+            title = item.find(class_="s-item__title").text
+            price = item.find(class_="s-item__price").text
+            date = item.find(class_="POSITIVE").string
+            link = item.find(class_="s-item__link")['href'].split("?")[0]
 
-    # Input boxes for specific information
-    brand = st.text_input("Brand (e.g., McFarlane):")
-    sport = st.text_input("Sport (e.g., NBA, NFL, NHL, MLB):")
-    year = st.text_input("Year (e.g., 2001 to 2009):")
-    series = st.text_input("Series (e.g., 1-23):")
-    player_name = st.text_input("Player Name:")
+            st.write(f"Title: {title}")
+            st.write(f"Price: {price}")
+            st.write(f"Date: {date}")
+            st.write(f"Link: {link}")
+            st.write("---")
 
-    if st.button("Generate Queries"):
-        # Check if any input is empty
-        if not all([brand, sport, year, series, player_name]):
-            st.write("Please fill in at least one input box.")
-            return
+            if price is not None:
+                price = price.replace("$", "")
+                if 'to' in price:
+                    price = sum([float(num) for num in price.split() if num != 'to']) / 2
+                    price = round(price, 2)
+                if float(price) < 500:
+                    price_list.append(float(price))
 
-        st.write("Generating possible search queries...")
-        queries = generate_queries(brand.split(), sport.split(), year.split(), series.split(), player_name.split())
+    price_list = list(set(price_list))
 
-        st.write("Possible Search Queries:")
-        for query in queries:
-            st.write(query)
-
-if name == "main":
-    main()import streamlit as st
-from itertools import product
-
-# Function to generate possible search queries
-def generate_queries(brand, sport, year, series, player_name):
-    # Remove empty strings from input lists
-    brand = [item.strip() for item in brand if item.strip()]
-    sport = [item.strip() for item in sport if item.strip()]
-    year = [item.strip() for item in year if item.strip()]
-    series = [item.strip() for item in series if item.strip()]
-    player_name = [item.strip() for item in player_name if item.strip()]
-
-    # Generate combinations of input values
-    combinations = list(product(brand, sport, year, series, player_name))
-    queries = []
-
-    # Create search queries
-    for combo in combinations:
-        query = " ".join(combo)
-        queries.append(query)
-
-    return queries
+    if price_list:
+        st.write(f"Highest Price: {max(price_list)}")
+        st.write(f"Lowest Price: {min(price_list)}")
+        st.write(f"Average Price: {round(sum(price_list) / len(price_list), 2)}")
+    else:
+        st.write("No items found matching the criteria.")
 
 # Streamlit App
 def main():
     st.title("eBay Sold Listings Scraper")
 
-    # Input boxes for specific information
-    brand = st.text_input("Brand (e.g., McFarlane):")
-    sport = st.text_input("Sport (e.g., NBA, NFL, NHL, MLB):")
-    year = st.text_input("Year (e.g., 2001 to 2009):")
-    series = st.text_input("Series (e.g., 1-23):")
-    player_name = st.text_input("Player Name:")
+    search_item = st.text_input("Enter the eBay item:")
+    if st.button("Scrape"):
+        if search_item:
+            st.write("Scraping eBay sold listings...")
+            scrape_ebay_sold_listings(search_item)
+        else:
+            st.write("Please enter a search item.")
 
-    if st.button("Generate Queries"):
-        # Check if any input is empty
-        if not all([brand, sport, year, series, player_name]):
-            st.write("Please fill in at least one input box.")
-            return
-
-        st.write("Generating possible search queries...")
-        queries = generate_queries(brand.split(), sport.split(), year.split(), series.split(), player_name.split())
-
-        st.write("Possible Search Queries:")
-        for query in queries:
-            st.write(query)
-
-if name == "main":
+if __name__ == "__main__":
     main()
