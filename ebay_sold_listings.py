@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 from collections import defaultdict
 from datetime import datetime
+import pandas as pd
 
 # Function to scrape eBay sold listings
 def scrape_ebay_sold_listings(search_query):
@@ -37,12 +38,7 @@ def scrape_ebay_sold_listings(search_query):
             month_year = date.strftime("%b-%Y")
             price_by_month[month_year].append(price)
 
-    for month_year, prices in price_by_month.items():
-        st.write(f"Month-Year: {month_year}")
-        st.write("Prices:")
-        for price in prices:
-            st.write(price)
-        st.write("---")
+    return price_by_month
 
 # Streamlit App
 def main():
@@ -87,23 +83,27 @@ def main():
 
         if search_query.strip():
             st.write(f"Scraping eBay sold listings for: {search_query}...")
-            scrape_ebay_sold_listings(search_query)
+            results = scrape_ebay_sold_listings(search_query)
+            st.write("## eBay Sold Listings:")
+            for month_year, prices in results.items():
+                st.write(f"Month-Year: {month_year}")
+                st.write("Prices:")
+                for price in prices:
+                    st.write(price)
+                st.write("---")
+            
+            # Convert results to DataFrame
+            df = pd.DataFrame([(month_year, price) for month_year, prices in results.items() for price in prices], columns=["Month-Year", "Price"])
+            
+            # Save results to GitHub
+            github_url = "https://gist.github.com/your_username/your_gist_id"
+            st.write("## Saving Results to GitHub:")
+            st.write("This feature is not implemented yet.")
+            st.write("You can manually save the results to a GitHub Gist using the following URL:")
+            st.write(github_url)
+            
         else:
             st.write("Please fill in at least one input box.")
-
-    # Embed Airtable database
-    st.write("## Embedded Airtable Database")
-    st.markdown("""
-        <iframe 
-            class="airtable-embed" 
-            src="https://airtable.com/embed/appGmHhILJWl81a00/shrlFSwDvbDWsjWcb?backgroundColor=green&viewControls=on" 
-            frameborder="0" 
-            onmousewheel="" 
-            width="100%" 
-            height="533" 
-            style="background: transparent; border: 1px solid #ccc;">
-        </iframe>
-        """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
