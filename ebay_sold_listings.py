@@ -88,7 +88,7 @@ def main():
     player_name = st.text_input("Player Name")
 
     # Construct search query
-    search_query = " ".join([brand, sport, year, series, player_name])
+    search_query = " ".join([brand, sport, year, player_name])
 
     custom_search = st.text_input("Custom Search")
 
