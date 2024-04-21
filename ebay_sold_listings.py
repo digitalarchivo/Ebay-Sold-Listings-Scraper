@@ -40,6 +40,19 @@ def scrape_ebay_sold_listings(search_query):
 
     return price_by_month
 
+# Function to save data to GitHub Gist
+def save_to_github_gist(data, access_token):
+    gist_url = "https://api.github.com/gists"
+    headers = {"Authorization": f"token {access_token}"}
+    files = {"data.csv": {"content": data.to_csv(index=False)}}
+    payload = {"description": "eBay Sold Listings Data", "public": True, "files": files}
+
+    response = requests.post(gist_url, headers=headers, json=payload)
+    if response.status_code == 201:
+        return response.json()["html_url"]
+    else:
+        return None
+
 # Streamlit App
 def main():
     # Apply background image
@@ -96,12 +109,16 @@ def main():
             df = pd.DataFrame([(month_year, price) for month_year, prices in results.items() for price in prices], columns=["Month-Year", "Price"])
             
             # Save results to GitHub
-            github_url = "https://gist.github.com/digitalarchivo/354903d05fb0661d6b825f3bf42133cc"
-            st.write("## Saving Results to GitHub:")
-            st.write("This feature is not implemented yet.")
-            st.write("You can manually save the results to a GitHub Gist using the following URL:")
-            st.write(github_url)
-            
+            github_token = "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"
+            gist_url = save_to_github_gist(df, github_token)
+            if gist_url:
+                st.write("## Saving Results to GitHub:")
+                st.write("Results saved to GitHub Gist successfully!")
+                st.write("You can view the results at the following URL:")
+                st.write(gist_url)
+            else:
+                st.write("Failed to save results to GitHub.")
+
         else:
             st.write("Please fill in at least one input box.")
 
