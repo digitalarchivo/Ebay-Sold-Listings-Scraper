@@ -96,7 +96,7 @@ def main():
             df = pd.DataFrame([(month_year, price) for month_year, prices in results.items() for price in prices], columns=["Month-Year", "Price"])
             
             # Save results to GitHub
-            github_url = "https://gist.github.com/your_username/your_gist_id"
+            github_url = "https://gist.github.com/digitalarchivo/354903d05fb0661d6b825f3bf42133cc"
             st.write("## Saving Results to GitHub:")
             st.write("This feature is not implemented yet.")
             st.write("You can manually save the results to a GitHub Gist using the following URL:")
