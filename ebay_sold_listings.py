@@ -48,14 +48,24 @@ def scrape_ebay_sold_listings(search_query):
 def main():
     st.title("eBay Sold Listings Scraper")
 
-    # Input boxes for specific information
-    brand = st.text_input("Brand (e.g., McFarlane):")
-    sport = st.text_input("Sport (e.g., NBA, NFL, NHL, MLB):")
-    year = st.text_input("Year (e.g., 2001 to 2009):")
-    series = st.text_input("Series (e.g., 1-23):")
-    player_name = st.text_input("Player Name:")
+    # Dropdown selectors for specific information
+    brand_options = ["McFarlane", "Kenner SLU"]
+    brand = st.selectbox("Brand", options=brand_options)
 
-    search_query = " ".join([brand, sport, year, series, player_name])
+    sport_options = ["NBA", "NFL", "NHL", "MLB"]
+    sport = st.selectbox("Sport", options=sport_options)
+
+    year_options = [str(year) for year in range(1988, 2021)]
+    year = st.selectbox("Year", options=year_options)
+
+    series_options = [str(series) for series in range(1, 24)]
+    series = st.selectbox("Series", options=series_options)
+
+    # Search box for custom search
+    custom_search = st.text_input("Custom Search")
+
+    # Construct search query
+    search_query = " ".join([brand, sport, year, series, custom_search])
 
     if st.button("Scrape Sold Listings"):
         if search_query.strip():
