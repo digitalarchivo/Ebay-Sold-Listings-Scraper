@@ -4,14 +4,11 @@ import requests
 from collections import defaultdict
 from datetime import datetime
 import pandas as pd
-<<<<<<< Updated upstream
-=======
 import os
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
->>>>>>> Stashed changes
 
 # Function to scrape eBay sold listings
 def scrape_ebay_sold_listings(search_query):
@@ -84,18 +81,9 @@ def main():
 
     sport_options = ["NBA", "NFL", "NHL", "MLB"]
     sport = st.selectbox("Sport", options=sport_options)
-<<<<<<< Updated upstream
 
     year_options = [str(year) for year in range(1988, 2021)]
     year = st.selectbox("Year", options=year_options)
-
-    series_options = [str(series) for series in range(1, 24)]
-    series = st.selectbox("Series", options=series_options)
-=======
-
-    year_options = [str(year) for year in range(1988, 2021)]
-    year = st.selectbox("Year", options=year_options)
->>>>>>> Stashed changes
 
     player_name = st.text_input("Player Name")
 
@@ -123,11 +111,7 @@ def main():
             df = pd.DataFrame([(month_year, price) for month_year, prices in results.items() for price in prices], columns=["Month-Year", "Price"])
             
             # Save results to GitHub
-<<<<<<< Updated upstream
-            github_token = "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"
-=======
             github_token = os.getenv("GITHUB_TOKEN")
->>>>>>> Stashed changes
             gist_url = save_to_github_gist(df, github_token)
             if gist_url:
                 st.write("## Saving Results to GitHub:")
