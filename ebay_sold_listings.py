@@ -46,6 +46,19 @@ def scrape_ebay_sold_listings(search_query):
 
 # Streamlit App
 def main():
+    # Apply background image
+    st.markdown(
+        """
+        <style>
+        .reportview-container {
+            background: url("https://i.ibb.co/8mTYfNb/background.jpg") no-repeat center center;
+            background-size: cover;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
     st.title("eBay Sold Listings Scraper")
 
     # Dropdown selectors for specific information
