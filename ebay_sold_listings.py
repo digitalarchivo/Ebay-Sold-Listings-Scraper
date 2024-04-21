@@ -61,15 +61,19 @@ def main():
     series_options = [str(series) for series in range(1, 24)]
     series = st.selectbox("Series", options=series_options)
 
-    # Search box for custom search
-    custom_search = st.text_input("Custom Search")
+    player_name = st.text_input("Player Name")
 
     # Construct search query
-    search_query = " ".join([brand, sport, year, series, custom_search])
+    search_query = " ".join([brand, sport, year, series, player_name])
 
-    if st.button("Scrape Sold Listings"):
+    custom_search = st.text_input("Custom Search")
+
+    if st.button("Search"):
+        if custom_search.strip():
+            search_query = custom_search.strip()
+
         if search_query.strip():
-            st.write("Scraping eBay sold listings...")
+            st.write(f"Scraping eBay sold listings for: {search_query}...")
             scrape_ebay_sold_listings(search_query)
         else:
             st.write("Please fill in at least one input box.")
